@@ -1,0 +1,4 @@
+﻿  gf28.cpp
+c:\users\朕\desktop\lab3\gf28\gf28.cpp(64): warning C4101: “y”: 未引用的局部变量
+  gf28.vcxproj -> C:\Users\朕\Desktop\lab3\Debug\gf28.exe
+  gf28.vcxproj -> C:\Users\朕\Desktop\lab3\Debug\gf28.pdb (Partial PDB)
