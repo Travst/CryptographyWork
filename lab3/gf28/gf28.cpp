@@ -53,8 +53,8 @@ void Sbox(int inv[]) {
 	unsigned char btmp;
 	for (int i = 0; i < 256; ++i) {
 		btmp = (unsigned char)inv[i];
-		// bi' = bi ^ b(i+4) ^ b(i+5) ^ b(i+6) ^ b(i+7) ^ {64}
-		sbox[i] = btmp^_rotl8(btmp, 1) ^ _rotl8(btmp, 2) ^ _rotl8(btmp, 3) ^ _rotl8(btmp, 4) ^ 0x63;	
+		// bi' = bi ^ b(i+4) ^ b(i+5) ^ b(i+6) ^ b(i+7) ^ {63}
+		sbox[i] = btmp^_rotl8(btmp, 4) ^ _rotl8(btmp, 3) ^ _rotl8(btmp, 2) ^ _rotl8(btmp, 1) ^ 0x63;	
 		if (i % 16 == 0)cout << endl;
 		cout << setw(3) << sbox[i];
 	}
@@ -66,7 +66,7 @@ int main() {
 	int inv[256] = { 0 };//table of x's inverse
 	table(grp, inv);
 	while (1) {
-		/*cout << "input x, y (all hex): ";
+		cout << "input x, y (all hex): ";
 		cin >> hex >> x >> hex >> y;
 		cout << "x + y = " << hex << gfadd(x, y) << endl;
 
@@ -76,7 +76,7 @@ int main() {
 
 		cout << "input x(hex): ";
 		cin >> hex >> x;
-		cout << "x * y = 1  solution: y = " << hex << inver(x, inv) << endl;*/
+		cout << "x * y = 1  solution: y = " << hex << inver(x, inv) << endl;
 
 		cout << "input g, x (all dec): ";
 		cin >> g >> x;
