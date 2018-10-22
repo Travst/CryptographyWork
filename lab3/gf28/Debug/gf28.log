@@ -1,3 +1,4 @@
 ﻿  gf28.cpp
+d:\mygit\cryptographywork\lab3\gf28\gf28.cpp(81): warning C4244: “=”: 从“unsigned short”转换到“unsigned char”，可能丢失数据
   gf28.vcxproj -> D:\myGit\CryptographyWork\lab3\Debug\gf28.exe
   gf28.vcxproj -> D:\myGit\CryptographyWork\lab3\Debug\gf28.pdb (Partial PDB)

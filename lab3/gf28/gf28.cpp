@@ -1,3 +1,120 @@
+	//v2.0	not using the graphs
+#include<iostream>
+#include<iomanip>
+#define unschar unsigned char
+#define unshort unsigned short
+using namespace std;
+unschar SBox[16][16];
+
+unshort GFadd(unshort a, unshort b) {
+	return a^b;
+}//addition and substration are the same
+
+unshort GFmul(unshort a, unshort b) {
+	unshort res = 0;
+	while (b) {
+		if (b & 1) {
+			res ^= a;
+		}
+		b >>= 1;
+		a <<= 1;
+		if (a > 255)
+			a ^= 283;
+	}
+	return res;
+}
+
+int polyorder(unshort poly) {
+	for (int i = 0; i < 16; ++i)
+		if (!(poly >> (i + 1)))
+			return i;
+	return 16;
+}
+unshort GFdiv(unshort a, unshort b, unshort &rem) {
+	if (b == 0) {
+		cout << "fault operation: divided zero\n";
+		return -1;
+	}
+	if (a < b) {
+		rem = a;
+		return 0;
+	}
+	int digree = polyorder(a) - polyorder(b);
+	unshort tmp = b << digree;
+	a = a ^ tmp;
+	return (1 << digree) | GFdiv(a, b, rem);
+}
+
+unshort GFinv(unshort a) {
+	if (a == 0) {
+		return 0;
+	}
+	unshort p = 0x11b, n = 0x11b;//283
+	unshort r0 = 1, r1 = 0, tmp;
+	unshort q = 0, d = a;
+	while (n) {
+		q = GFdiv(d, n, tmp);
+		d = n;
+		n = tmp;
+		tmp = r0^GFmul(q, r1);	//	r0 - q * r1
+		r0 = r1;
+		r1 = tmp;
+	}
+	unshort x = 0;
+	GFdiv(GFdiv(r0, d, tmp), p, x);	// x = (r0 / d) % n
+	return x;
+}
+
+unshort Discrelog(unshort g, unshort x) {
+	if (g == 0 || (g == 1 && x != 1)) {
+		cout << "no solution\n";
+		return -1;
+	}
+	unshort y = 0;
+	unshort gy = 1;
+	while (gy != x) {
+		gy = GFmul(gy, g);
+		++y;
+	}
+	return y;
+}
+
+void Initbox() {
+	for (int i = 0; i < 16; ++i)
+		for (int j = 0; j < 16; ++j)
+			SBox[i][j] = GFinv((i << 4) | j);
+}
+void Tranbox() {
+	unschar btmp;
+	for (int i = 0; i < 16; ++i)
+		for (int j = 0; j < 16; ++j) {
+			btmp = SBox[i][j];
+			// bi' = bi ^ b(i+4) ^ b(i+5) ^ b(i+6) ^ b(i+7) ^ {63}
+			SBox[i][j] = btmp ^ _rotl8(btmp, 4) ^ _rotl8(btmp, 3) ^ _rotl8(btmp, 2) ^ _rotl8(btmp, 1) ^ 0x63;
+		}
+}
+void Dispbox() {
+	Initbox();
+	Tranbox();
+	cout << "AES's S-Box:\n";
+	for (int i = 0; i < 16; ++i) {
+		for (int j = 0; j < 16; ++j)
+			cout << setw(3) << hex << (int)SBox[i][j];
+		cout << endl;
+	}
+}
+
+int main() {
+	unshort a = 0x2, b = 0x4, x = 0x05, g = 0x03;
+	printf_s("0x%X + 0x%x = 0x%X\n", a, b, GFadd(a, b));
+	printf_s("0x%X * 0x%X = 0x%X\n", a, b, GFmul(a, b));
+	printf_s("0x%X * y = 1, solution: y = 0x%X\n", a, GFinv(a));
+	printf_s("0x%X^y = 0x%X, solution: y = 0x%X\n", g, x, Discrelog(g,x));
+	system("pause");
+	return 0;
+}
+
+/*	//v1.0
 #include<iostream>
 #include<iomanip>
 using namespace std;
@@ -89,3 +206,4 @@ int main() {
 	}
 	return 0;
 }
+*/
