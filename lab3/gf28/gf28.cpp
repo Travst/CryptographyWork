@@ -1,4 +1,4 @@
-	//v2.0	not using the graphs
+	//v2.0	not using the table
 #include<iostream>
 #include<iomanip>
 #define unschar unsigned char
@@ -45,6 +45,34 @@ unshort GFdiv(unshort a, unshort b, unshort &rem) {
 	return (1 << digree) | GFdiv(a, b, rem);
 }
 
+unshort GFegcd(unshort a, unshort b, unshort &x, unshort &y) {
+	if (b == 0) {
+		x = 1;
+		y = 0;
+		return a;
+	}
+	unshort tmp = 0, tmp2 = 0;
+	GFdiv(a, b, tmp);// tmp = a % b
+	unshort ans = GFegcd(b, tmp, x, y);
+	tmp = x;
+	x = y;
+	y = tmp ^ GFmul(GFdiv(a, b, tmp2), y);// y = tmp - a / b *y
+	return ans;
+}
+unshort inv(unshort a) {
+	unshort x, y, p = 283;
+	if (GFegcd(a, p, x, y) == 1) {// ax + my = p	
+		/*
+		unshort tmp, ans;
+		GFdiv(x, p, tmp);//	tmp = a % p
+		tmp = GFadd(tmp, p);//	tmp += p
+		GFdiv(tmp, p, ans);//	ans = tmp % p
+		return ans;//	return (x%p + p)%p
+		*/
+		return x;
+	}
+	return p;
+}//¢ñ
 unshort GFinv(unshort a) {
 	if (a == 0) {
 		return 0;
@@ -61,9 +89,9 @@ unshort GFinv(unshort a) {
 		r1 = tmp;
 	}
 	unshort x = 0;
-	GFdiv(GFdiv(r0, d, tmp), p, x);	// x = (r0 / d) % n
+	GFdiv(GFdiv(r0, d, tmp), p, x);	// x = (r0 / d) % p
 	return x;
-}
+}//¢ò
 
 unshort Discrelog(unshort g, unshort x) {
 	if (g == 0 || (g == 1 && x != 1)) {
@@ -96,7 +124,7 @@ void Tranbox() {
 void Dispbox() {
 	Initbox();
 	Tranbox();
-	cout << "AES's S-Box:\n";
+	cout << "\nAES's S-Box:\n";
 	for (int i = 0; i < 16; ++i) {
 		for (int j = 0; j < 16; ++j)
 			cout << setw(3) << hex << (int)SBox[i][j];
@@ -108,8 +136,10 @@ int main() {
 	unshort a = 0x2, b = 0x4, x = 0x05, g = 0x03;
 	printf_s("0x%X + 0x%x = 0x%X\n", a, b, GFadd(a, b));
 	printf_s("0x%X * 0x%X = 0x%X\n", a, b, GFmul(a, b));
-	printf_s("0x%X * y = 1, solution: y = 0x%X\n", a, GFinv(a));
+	printf_s("0x%X * y = 1, solution: y = 0x%X\n", b, GFinv(b));
+	printf_s("0x%X * y = 1, solution: y = 0x%X\n", b, inv(b));
 	printf_s("0x%X^y = 0x%X, solution: y = 0x%X\n", g, x, Discrelog(g,x));
+	Dispbox();
 	system("pause");
 	return 0;
 }

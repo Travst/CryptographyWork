@@ -1,4 +1,4 @@
-
+'''
 import math
 def BSGS(a, b, p):
     cp = math.ceil(math.sqrt(p))    #根号p向上取整
@@ -10,13 +10,11 @@ def BSGS(a, b, p):
     for A in range(cp + 1):
         tmp = a**(A * cp) % p
         if(baB.get(tmp)):
-           allx.append(A * cp - baB[tmp]) # 如果 a 的 A*cp 次方 == b*（a的B次方），计算出x存于allx中
+            x = A * cp - baB[tmp]   # 0 < x <= p
+            if(x > 0 and x <= p):
+                allx.append(x) # 如果 a^(A*cp) == b* a^B，计算出x存于allx中
     allx.sort()
-    x = 0;
-    for x in allx:
-        if x>=0:
-            break;
-    return x
+    return allx
 
 def factor(n):  # n的所有因子
     f = list()
@@ -45,15 +43,20 @@ def min_origin(p):
     return i
 
 def primefun(a, b, p):
-    if b>=p:
+    if b >= p:
         print("no sulution")
         return None
     g = min_origin(p)
-    c = BSGS(g**a, b, p)
-    x = g**c % p
-    print("%d^%d = %d mod p".format({x,a,b,p}))
+    allc = BSGS(g**a, b, p)
+    if len(allc) == 0:
+        print("no sulution")
+        return None
+    x = set()
+    for c in allc:
+        x.add(g**c % p)
+    print("{0}^{1} = {2} mod {3}".format(x,a,b,p))
 
-a, b, p = 2, 3, 11
+a, b, p = 131, 758, 1073
 primefun(a, b, p)
 #print(factor(8))
 #print(factor(11))
@@ -95,6 +98,7 @@ def exhaustive(a, b, n):
     return 1
 
 #a, b, p = 2, 3, 11
-a, b, p = map(int, input().split())
+#a, b, p = map(int, input().split())
+a, b, p = 131, 758, 1073
 exhaustive(a, b, p)
-'''
+
